@@ -1,9 +1,9 @@
 # Bias and Variance Reduction in Off-policy Reinforcement Learning
 Project 14, Columbia IEOR 2020 Summer Research Initiative
 
-Supervisor: Dr.Henry Lam (Columbia IEOR Dept.)
+Supervisor: Dr. Henry Lam (Columbia IEOR Dept.)
 
-Team Member: Yihao Li(yl4326@columbia.edu)
+Team Member: Yihao Li(yl4326@columbia.edu), 
              Jierong Luo(jl5502@columbia.edu)
              
 A new policy gradient estimation method inspired by Liu, et al.'s idea in 2018[1]. Focused on the (state, action, next state) triple's distribution in the trajectory rather than the trajectory itself. The new estimate's variance will not be affected by the time horizon in theory.(Most of the existed estimation process will suffer an exponential variance w.r.t. the time horizon)
