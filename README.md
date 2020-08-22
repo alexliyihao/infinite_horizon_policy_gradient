@@ -25,5 +25,6 @@ The off-policy optimization learning curve showed that IHP method has a signific
 
 ![NN_Optimization](visualization/off-policy_optimization.png)
 
+The parametric model one is implemented by Jierong Luo in Matlab, the Neural Network model one is implemented by Yihao Li in Python (Pytorch)
 
 [1] Liu, Q., Li, L., Tang, Z., & Zhou, D. (2018). Breaking the curse of horizon: Infinite-horizon off-policy estimation. In Advances in Neural Information Processing Systems (pp. 5356-5366). https://arxiv.org/pdf/1810.12429.pdf 
