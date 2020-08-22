@@ -19,7 +19,7 @@ The parametric model controlled the bias in 10e2 order, the variance in 10e4 ord
 
 Neural Network Model controlled the direction variance(measured by the trace of the covariance matrix of the normalized gradients) by 0.3 (IHP 0.6 vs Baseline 0.9 to 1.0).
 
-![NN_variance](visualization/variance_data.png)
+![NN_variance](visualization/Variance_data.png)
 
 The off-policy optimization learning curve showed that IHP method has a significant advantage compared with all the benchmarks.
 
