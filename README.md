@@ -17,7 +17,7 @@ The parametric model controlled the bias in 10e2 order, the variance in 10e4 ord
 
 ![Parametric Variance](visualization/parametric_image_variance.png)
 
-Neural Network Model controlled the direction variance(measured by the trace of the covariance matrix of the normalized gradients) by 0.3 (IHP 0.6 vs Baseline 0.9 to 1.0).
+Neural Network Model controlled the direction variance(measured by the trace of the covariance matrix of the normalized gradients) by about 0.3 (IHP 0.65 vs Baseline 0.9 to 1.0).
 
 ![NN_variance](visualization/Variance_data.png)
 
