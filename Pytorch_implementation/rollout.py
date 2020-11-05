@@ -26,7 +26,7 @@ def select_action(policy, state: int = 0, mode = "param"):
             c = Bernoulli(action_prob)
         else:
             # by the probablity obtained, create a categorical distribution
-            c = Categorical(action)
+            c = Categorical(action_prob)
         # sample from this distribution
         action = c.sample()
         return action.item()

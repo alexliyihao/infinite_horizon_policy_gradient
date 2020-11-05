@@ -23,7 +23,7 @@ def get_one_hot(i, state_space):
     return state
 
 
-def get_policy_prob_ratio(policy_1, policy_0, state_space: int, in_policy: bool):
+def get_policy_prob_ratio(policy_1, policy_0, state_space: int, in_policy: bool, model):
     """
     for an existed policy, get the probability ratio pi_1(a|s)/pi_0(a|s) of selecting actions in the whole state space
     input:
@@ -40,13 +40,21 @@ def get_policy_prob_ratio(policy_1, policy_0, state_space: int, in_policy: bool)
             action_prob_ratio = [torch.ones(2, device = "cuda") for i in range(state_space)]
         else:
             action_prob_ratio = []
-            for i in range(state_space):
-                policy_1_action_1_prob = policy_1(get_one_hot(i, 6))
-                policy_1_prob = torch.tensor([1-policy_1_action_1_prob, policy_1_action_1_prob], device= "cuda")
-                policy_0_action_1_prob = policy_0(get_one_hot(i, 6))
-                policy_0_prob = torch.tensor([1-policy_0_action_1_prob, policy_0_action_1_prob], device = "cuda")
-                ratio = torch.true_divide(policy_1_prob, policy_0_prob)
-                action_prob_ratio.append(ratio)
+            if model == "param":
+                for i in range(state_space):
+                    policy_1_action_1_prob = policy_1(get_one_hot(i, 6))
+                    policy_1_prob = torch.tensor([1-policy_1_action_1_prob, policy_1_action_1_prob], device= "cuda")
+                    policy_0_action_1_prob = policy_0(get_one_hot(i, 6))
+                    policy_0_prob = torch.tensor([1-policy_0_action_1_prob, policy_0_action_1_prob], device = "cuda")
+                    ratio = torch.true_divide(policy_1_prob, policy_0_prob)
+                    action_prob_ratio.append(ratio)
+            else:
+                for i in range(state_space):
+                    policy_1_action_1_prob = policy_1(get_one_hot(i, 6))
+                    policy_0_action_1_prob = policy_0(get_one_hot(i, 6))
+                    ratio = torch.true_divide(policy_1_action_1_prob, policy_0_action_1_prob)
+                    action_prob_ratio.append(ratio)
+
         return action_prob_ratio
 
 def get_log_pi_gradient(policy, action, state, mode = "param"):
@@ -79,7 +87,7 @@ def get_log_pi_gradient(policy, action, state, mode = "param"):
         # by the probablity obtained, create a categorical distribution
         c = Categorical(probs)
 
-    loss = c.log_prob(action)
+    loss = c.log_prob(torch.tensor(action).float().cuda())
     
     # calculate the gradient
     loss.backward()

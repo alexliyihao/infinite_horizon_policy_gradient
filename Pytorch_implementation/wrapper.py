@@ -2,7 +2,7 @@ import copy
 import gc
 import numpy as np
 import matplotlib.pyplot as plt
-from .optimization_grad import gradient_estimate_benchmark, gradient_estimate_causality, gradient_estimate_baseline, gradient_estimate_ihp1
+from .optimization_grad import gradient_estimate_benchmark, gradient_estimate_causality, gradient_estimate_baseline, gradient_estimate_ihp1, gradient_estimate_aggregate
 from .variance_grad import variance_estimate_aggregate
 from .environment import riverswim
 from .policies import Policy_NN, Policy_Param
@@ -164,25 +164,25 @@ def off_policy_optimization(rolling_out_start_recording: int = 1000,
                                                      start = rolling_out_start_recording,
                                                      rolling_length = rolling_out_step,
                                                      discount_constant = discount_constant,
-                                                     mode = mode)
+                                                     mode = model)
         reward_causality = roll_out_evaluate_average(policy = policy_causality,
                                                      environment = environment,
                                                      start = rolling_out_start_recording,
                                                      rolling_length = rolling_out_step,
                                                      discount_constant = discount_constant,
-                                                     mode = mode)
+                                                     mode = model)
         reward_baseline = roll_out_evaluate_average(policy = policy_baseline,
                                                      environment = environment,
                                                      start = rolling_out_start_recording,
                                                      rolling_length = rolling_out_step,
                                                      discount_constant = discount_constant,
-                                                     mode = mode)
+                                                     mode = model)
         reward_ihp1 = roll_out_evaluate_average(policy = policy_ihp1,
                                                 environment = environment,
                                                 start = rolling_out_start_recording,
                                                 rolling_length = rolling_out_step,
                                                 discount_constant = discount_constant,
-                                                mode = mode)
+                                                mode = model)
 
         tb.add_scalars(main_tag=f"Average reward per step: off policy, lr = {lr}",
                                 tag_scalar_dict={"Benchmark": reward_benchmark,
@@ -202,7 +202,8 @@ def off_policy_optimization(rolling_out_start_recording: int = 1000,
                                                                                                                           rolling_out_step = rolling_out_step,
                                                                                                                           n_rolling_out = n_rolling_out,
                                                                                                                           discount_constant = discount_constant,
-                                                                                                                          in_policy = False)
+                                                                                                                          in_policy = False,
+                                                                                                                          model = model)
         update_parameter(policy = policy_benchmark,
                          policy_gradient = policy_grad_benchmark,
                          learning_rate= lr_benchmark,

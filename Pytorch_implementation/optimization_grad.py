@@ -35,7 +35,8 @@ def gradient_estimate_benchmark(policy_0,
     policy_prob_ratio = get_policy_prob_ratio(policy_1 = policy_1,
                                               policy_0 = policy_0,
                                               state_space = 6,
-                                              in_policy = in_policy)
+                                              in_policy = in_policy,
+                                              model = model)
 
     # the grad of log_pi w.r.t. theta, deterministic
     grad_log = [[get_log_pi_gradient(policy = policy_1, state = i, action=j, mode = model) for j in range(2)] for i in range(6)]
@@ -87,7 +88,8 @@ def gradient_estimate_causality(policy_0,
     policy_prob_ratio = get_policy_prob_ratio(policy_1 = policy_1,
                                               policy_0 = policy_0,
                                               state_space = 6,
-                                              in_policy = in_policy)
+                                              in_policy = in_policy,
+                                              model = model)
 
     # the grad of log_pi w.r.t. theta, deterministic
     grad_log = [[get_log_pi_gradient(policy = policy_1, state = i, action=j, mode = model) for j in range(2)] for i in range(6)]
@@ -141,7 +143,8 @@ def gradient_estimate_baseline(policy_0,
     policy_prob_ratio = get_policy_prob_ratio(policy_1 = policy_1,
                                               policy_0 = policy_0,
                                               state_space = 6,
-                                              in_policy = in_policy)
+                                              in_policy = in_policy,
+                                              model = model)
 
     # the grad of log_pi w.r.t. theta, deterministic
     grad_log = [[get_log_pi_gradient(policy = policy_1, state = i, action=j, mode = model) for j in range(2)] for i in range(6)]
@@ -210,7 +213,8 @@ def gradient_estimate_ihp1(policy_0,
     policy_prob_ratio = get_policy_prob_ratio(policy_1 = policy_1,
                                               policy_0 = policy_0,
                                               state_space = 6,
-                                              in_policy = in_policy)
+                                              in_policy = in_policy,
+                                              model = model)
     # the grad of log_pi w.r.t. theta, deterministic
     grad_log = [[get_log_pi_gradient(policy = policy_1, state = i, action=j, mode = model) for j in range(2)] for i in range(6)]
     # all the random part
@@ -302,19 +306,23 @@ def gradient_estimate_aggregate(policy_0,
     policy_prob_ratio_benchmark = get_policy_prob_ratio(policy_1 = policy_1_benchmark,
                                                         policy_0 = policy_0,
                                                         state_space = 6,
-                                                        in_policy = in_policy)
+                                                        in_policy = in_policy,
+                                                        model = model)
     policy_prob_ratio_causality = get_policy_prob_ratio(policy_1 = policy_1_causality,
                                                         policy_0 = policy_0,
                                                         state_space = 6,
-                                                        in_policy = in_policy)
+                                                        in_policy = in_policy,
+                                                        model = model)
     policy_prob_ratio_baseline  = get_policy_prob_ratio(policy_1 = policy_1_baseline,
                                                         policy_0 = policy_0,
                                                         state_space = 6,
-                                                        in_policy = in_policy)
+                                                        in_policy = in_policy,
+                                                        model = model)
     policy_prob_ratio_ihp1      = get_policy_prob_ratio(policy_1 = policy_1_ihp1,
                                                         policy_0 = policy_0,
                                                         state_space = 6,
-                                                        in_policy = in_policy)
+                                                        in_policy = in_policy,
+                                                        model = model)
     # the grad of log_pi w.r.t. theta, deterministic
     grad_log_benchmark = [[get_log_pi_gradient(policy = policy_1_benchmark, state = i, action=j, mode = model) for j in range(2)] for i in range(6)]
     grad_log_causality = [[get_log_pi_gradient(policy = policy_1_causality, state = i, action=j, mode = model) for j in range(2)] for i in range(6)]
