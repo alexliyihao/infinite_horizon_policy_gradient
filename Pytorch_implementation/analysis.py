@@ -2,12 +2,47 @@
 All the analysis method used
 """
 import numpy as np
+import torch
 import torch.nn.functional as F
 import pandas as pd
 pd.set_option('display.float_format', '{:.4e}'.format)
 import matplotlib.pyplot as plt
 import seaborn as sns
 sns.set_style("darkgrid")
+
+def analysis(benchmark_record, causality_record, baseline_record, ihp1_record, true_value = None, mode = "param"):
+    """
+    wrapper of the variance and direction analysis
+    input:
+      benchmark_record, baseline_record, causality_record, ihp1_record: list of np.array, a list of all the ndarray form of gradient in n_grad * num_param shape
+    """
+    print(mode)
+    direction_analysis(benchmark_record = benchmark_record, 
+                       causality_record = causality_record, 
+                       baseline_record = baseline_record, 
+                       ihp1_record = ihp1_record, 
+                       true_value = true_value, 
+                       mode = mode)
+    if mode == "param":
+        for i in range(6):
+            boxplot_analysis(benchmark_record = benchmark_record, 
+                            causality_record = causality_record, 
+                            baseline_record = baseline_record, 
+                            ihp1_record = ihp1_record,  
+                            true_value = true_value,
+                            dim = i, 
+                            mode = mode)
+    else:
+        for i in range(20):
+            boxplot_analysis(benchmark_record = benchmark_record, 
+                            causality_record = causality_record, 
+                            baseline_record = baseline_record, 
+                            ihp1_record = ihp1_record,  
+                            true_value = true_value,
+                            dim = i, 
+                            mode = mode)
+    return variance_analysis(records = [benchmark_record, causality_record, baseline_record, ihp1_record],
+                             names = ["benchmark",  "causality", "baseline", "ihp1"])
 
 def individual_analysis(record, dim):
     """
@@ -94,23 +129,13 @@ def direction_analysis(benchmark_record,
     print("ihp1 vs benchmark: ", cosine_similarity(np.mean(benchmark_record, axis = 0), np.mean(ihp1_record, axis = 0)))
     print("ihp1 vs baseline: ", cosine_similarity(np.mean(baseline_record, axis = 0), np.mean(ihp1_record, axis = 0)))
     print("ihp1 vs causality: ", cosine_similarity(np.mean(causality_record, axis = 0), np.mean(ihp1_record, axis = 0)))
-    if mode == "param" and true_value != None:
+    if mode == "param" and isinstance(true_value, np.ndarray):
         print("benchmark vs true value: ", cosine_similarity(np.mean(benchmark_record, axis = 0), true_value))
         print("causality vs true value: ", cosine_similarity(np.mean(causality_record, axis = 0), true_value))
         print("baseline vs true value: ", cosine_similarity(np.mean(baseline_record, axis = 0), true_value))
         print("ihp1 vs true value: ", cosine_similarity(np.mean(ihp1_record, axis = 0), true_value))
 
-def analysis(benchmark_record, causality_record, baseline_record, ihp1_record, true_value = None, mode = "param"):
-    """
-    wrapper of the variance and direction analysis
-    input:
-      benchmark_record, baseline_record, causality_record, ihp1_record: list of np.array, a list of all the ndarray form of gradient in n_grad * num_param shape
-    """
-    direction_analysis(benchmark_record, causality_record, baseline_record, ihp1_record, true_value, mode = "param")
-    for i in range(6):
-        boxplot_analysis(benchmark_record,causality_record,baseline_record,ihp1_record, true_value, dim = i, mode = mode)
-    return variance_analysis(records = [benchmark_record, causality_record, baseline_record, ihp1_record],
-                             names = ["benchmark",  "causality", "baseline", "ihp1"])
+
 
 def boxplot_analysis(benchmark_record,
                      causality_record,
@@ -128,7 +153,7 @@ def boxplot_analysis(benchmark_record,
     df['method'] = ["benchmark", "causality", "baseline", "ihp1"]
     df = pd.melt(df, id_vars = 'method')
     sns.boxplot(data = df, x = "method", y = "value")
-    if mode == "param" and true_value != None:
+    if mode == "param" and isinstance(true_value, np.ndarray):
         plt.axhline(true_value[dim], c = "r")
     plt.title(f"entry wise distribution in boxplot, dim = {dim}")
     plt.show()

@@ -234,8 +234,6 @@ def off_policy_optimization(rolling_out_start_recording: int = 1000,
 def variance_illustration(rolling_out_start_recording: int = 1000,
                           rolling_out_step: int = 15000,
                           n_rolling_out: int = 5,
-                          optimization_step: int = 50,
-                          lr: float = 0.05,
                           discount_constant: float = 1.0,
                           model: str = "param",
                           tensorboard: bool = True):
@@ -249,10 +247,6 @@ def variance_illustration(rolling_out_start_recording: int = 1000,
     environment = riverswim()
 
     policy_1 = copy.deepcopy(policy_0).cuda()
-    # configuration
-    rolling_out_start_recording = 1000
-    rolling_out_step = 50000
-    n_rolling_out = 50
 
     benchmark_record, causality_record, baseline_record, ihp1_record = variance_estimate_aggregate(policy_0 = policy_0,
                                                                                                    policy_1 = policy_1,
@@ -260,23 +254,23 @@ def variance_illustration(rolling_out_start_recording: int = 1000,
                                                                                                    rolling_out_start_recording = rolling_out_start_recording,
                                                                                                    rolling_out_step = rolling_out_step,
                                                                                                    n_rolling_out = n_rolling_out,
-                                                                                                   discount_constant = 0.9,
+                                                                                                   discount_constant = discount_constant,
                                                                                                    in_policy = True,
                                                                                                    ls_tb_illustration = False,
                                                                                                    model = model
                                                                                                   )
     if model == "param":
-        theoretical_value = get_theoretical_gradient(policy = policy_0, environment=env)[0].cpu().numpy()
-        analysis(benchmark_record = benchmark_record,
-                 causality_record = causality_record,
-                 baseline_record = baseline_record,
-                 ihp1_record = ihp1_record,
-                 theoretical_value = theoretical_value,
-                 mode = model)
+        theoretical_value = get_theoretical_gradient(policy = policy_0, environment=environment)[0].cpu().numpy()
+        return analysis(benchmark_record = benchmark_record,
+                        causality_record = causality_record,
+                        baseline_record = baseline_record,
+                        ihp1_record = ihp1_record,
+                        true_value = theoretical_value,
+                        mode = model)
     else:
-        analysis(benchmark_record = benchmark_record,
-                 causality_record = causality_record,
-                 baseline_record = baseline_record,
-                 ihp1_record = ihp1_record,
-                 theoretical_value = None,
-                 mode = model)
+        return analysis(benchmark_record = benchmark_record,
+                        causality_record = causality_record,
+                        baseline_record = baseline_record,
+                        ihp1_record = ihp1_record,
+                        true_value = None,
+                        mode = model)

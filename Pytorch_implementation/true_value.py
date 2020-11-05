@@ -54,7 +54,7 @@ def get_theoretical_gradient(policy, environment):
     B = torch.zeros(22,1, device= "cuda")
     B[20] = 1
     stationary_distribution_sas, _ = torch.solve(input = B, A = A)
-    reward_list= torch.tensor([env.get_reward(i[0], i[1], i[2]) for i in s_a_s_list], device = "cuda")
+    reward_list= torch.tensor([environment.get_reward(i[0], i[1], i[2]) for i in s_a_s_list], device = "cuda")
     expected_reward = torch.dot(stationary_distribution_sas.flatten(),reward_list)
     expected_reward.backward()
     gradient = Prob.grad

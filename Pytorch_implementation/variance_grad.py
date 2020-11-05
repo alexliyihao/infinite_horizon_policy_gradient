@@ -5,7 +5,9 @@ the output is a little bit different(this one is numpy record of all generated).
 
 from .utils import *
 from .implementations import *
+from .rollout import *
 from tqdm.notebook import tqdm
+
 def variance_estimate_benchmark(policy_0,
                                 policy_1,
                                 env,
@@ -31,7 +33,8 @@ def variance_estimate_benchmark(policy_0,
     policy_prob_ratio = get_policy_prob_ratio(policy_1 = policy_1,
                                               policy_0 = policy_0,
                                               state_space = 6,
-                                              in_policy = in_policy)
+                                              in_policy = in_policy,
+                                              model = model)
 
     # the grad of log_pi w.r.t. theta, deterministic
     grad_log = [[get_log_pi_gradient(policy = policy_1, state = i, action=j, mode = model) for j in range(2)] for i in range(6)]
@@ -87,7 +90,8 @@ def variance_estimate_causality(policy_0,
     policy_prob_ratio = get_policy_prob_ratio(policy_1 = policy_1,
                                               policy_0 = policy_0,
                                               state_space = 6,
-                                              in_policy = in_policy)
+                                              in_policy = in_policy,
+                                              model = model)
 
     # the grad of log_pi w.r.t. theta, deterministic
     grad_log = [[get_log_pi_gradient(policy = policy_1, state = i, action=j, mode = model) for j in range(2)] for i in range(6)]
@@ -142,7 +146,8 @@ def variance_estimate_baseline(policy_0,
     policy_prob_ratio = get_policy_prob_ratio(policy_1 = policy_1,
                                               policy_0 = policy_0,
                                               state_space = 6,
-                                              in_policy = in_policy)
+                                              in_policy = in_policy,
+                                              model = model)
 
     # the grad of log_pi w.r.t. theta, deterministic
     grad_log = [[get_log_pi_gradient(policy = policy_1, state = i, action=j, mode = model) for j in range(2)] for i in range(6)]
@@ -212,7 +217,8 @@ def variance_estimate_ihp1(policy_0,
     policy_prob_ratio = get_policy_prob_ratio(policy_1 = policy_1,
                                               policy_0 = policy_0,
                                               state_space = 6,
-                                              in_policy = in_policy)
+                                              in_policy = in_policy,
+                                              model = model)
 
     # the grad of log_pi w.r.t. theta, deterministic
     grad_log = [[get_log_pi_gradient(policy = policy_1, state = i, action=j, mode = model) for j in range(2)] for i in range(6)]
@@ -310,7 +316,8 @@ def variance_estimate_aggregate(policy_0,
     policy_prob_ratio = get_policy_prob_ratio(policy_1 = policy_1,
                                               policy_0 = policy_0,
                                               state_space = 6,
-                                              in_policy = in_policy)
+                                              in_policy = in_policy,
+                                              model = model)
 
     # the grad of log_pi w.r.t. theta, deterministic
     grad_log = [[get_log_pi_gradient(policy = policy_1, state = i, action=j, mode = model) for j in range(2)] for i in range(6)]
@@ -357,7 +364,7 @@ def variance_estimate_aggregate(policy_0,
 
         # approximate w for policy 1
         w_approxi = direct_solve_least_square(policy = policy_1,
-                                              triple_pi_coun = triple_pi_count_1,
+                                              triple_pi_count = triple_pi_count_1,
                                               grad_log = grad_log,
                                               state_list = state_list_1,
                                               tb_illustration = ls_tb_illustration
