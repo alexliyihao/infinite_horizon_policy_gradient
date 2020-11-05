@@ -1,4 +1,4 @@
-from utils import *
+from .utils import *
 import torch
 from torch.distributions import Categorical, Bernoulli
 import numpy as np

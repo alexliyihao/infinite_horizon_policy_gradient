@@ -3,10 +3,10 @@ This implementation are same as the variance_grad.py,
 the output is a little bit different(this one is element-wise mean in torch.tensor).
 """
 
-from utils import *
-from implementations import *
+from .utils import *
+from .implementations import *
 from tqdm.notebook import tqdm
-from rollout import roll_out_procedure
+from .rollout import roll_out_procedure
 import numpy as np
 import torch
 
@@ -38,7 +38,7 @@ def gradient_estimate_benchmark(policy_0,
                                               in_policy = in_policy)
 
     # the grad of log_pi w.r.t. theta, deterministic
-    grad_log = [[get_log_pi_gradient(policy = policy_1, state = i, action=j) for j in range(2)] for i in range(6)]
+    grad_log = [[get_log_pi_gradient(policy = policy_1, state = i, action=j, mode = model) for j in range(2)] for i in range(6)]
 
     policy_gradient_record = []
     traj_reward_list = []
@@ -90,7 +90,7 @@ def gradient_estimate_causality(policy_0,
                                               in_policy = in_policy)
 
     # the grad of log_pi w.r.t. theta, deterministic
-    grad_log = [[get_log_pi_gradient(policy = policy_1, state = i, action=j) for j in range(2)] for i in range(6)]
+    grad_log = [[get_log_pi_gradient(policy = policy_1, state = i, action=j, mode = model) for j in range(2)] for i in range(6)]
 
     #the trajectory part, random
     policy_gradient_record = []
@@ -144,7 +144,7 @@ def gradient_estimate_baseline(policy_0,
                                               in_policy = in_policy)
 
     # the grad of log_pi w.r.t. theta, deterministic
-    grad_log = [[get_log_pi_gradient(policy = policy_1, state = i, action=j) for j in range(2)] for i in range(6)]
+    grad_log = [[get_log_pi_gradient(policy = policy_1, state = i, action=j, mode = model) for j in range(2)] for i in range(6)]
 
     #the trajectory part, random
     triple_pi_0_list = []
@@ -212,7 +212,7 @@ def gradient_estimate_ihp1(policy_0,
                                               state_space = 6,
                                               in_policy = in_policy)
     # the grad of log_pi w.r.t. theta, deterministic
-    grad_log = [[get_log_pi_gradient(policy = policy_1, state = i, action=j) for j in range(2)] for i in range(6)]
+    grad_log = [[get_log_pi_gradient(policy = policy_1, state = i, action=j, mode = model) for j in range(2)] for i in range(6)]
     # all the random part
     policy_gradient_record = []
     traj_reward_list = []
@@ -316,10 +316,10 @@ def gradient_estimate_aggregate(policy_0,
                                                         state_space = 6,
                                                         in_policy = in_policy)
     # the grad of log_pi w.r.t. theta, deterministic
-    grad_log_benchmark = [[get_log_pi_gradient(policy = policy_1_benchmark, state = i, action=j) for j in range(2)] for i in range(6)]
-    grad_log_causality = [[get_log_pi_gradient(policy = policy_1_causality, state = i, action=j) for j in range(2)] for i in range(6)]
-    grad_log_baseline = [[get_log_pi_gradient(policy = policy_1_baseline, state = i, action=j) for j in range(2)] for i in range(6)]
-    grad_log_ihp1 = [[get_log_pi_gradient(policy = policy_1_ihp1, state = i, action=j) for j in range(2)] for i in range(6)]
+    grad_log_benchmark = [[get_log_pi_gradient(policy = policy_1_benchmark, state = i, action=j, mode = model) for j in range(2)] for i in range(6)]
+    grad_log_causality = [[get_log_pi_gradient(policy = policy_1_causality, state = i, action=j, mode = model) for j in range(2)] for i in range(6)]
+    grad_log_baseline = [[get_log_pi_gradient(policy = policy_1_baseline, state = i, action=j, mode = model) for j in range(2)] for i in range(6)]
+    grad_log_ihp1 = [[get_log_pi_gradient(policy = policy_1_ihp1, state = i, action=j, mode = model) for j in range(2)] for i in range(6)]
 
     #the trajectory part, random
     policy_gradient_record_benchmark = []

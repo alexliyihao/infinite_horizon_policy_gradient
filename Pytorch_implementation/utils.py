@@ -2,7 +2,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.distributions import Categorical
+from torch.distributions import Categorical, Bernoulli
 import matplotlib.pyplot as plt
 import seaborn as sns
 
@@ -48,7 +48,7 @@ def get_policy_prob_ratio(policy_1, policy_0, state_space: int, in_policy: bool)
                 action_prob_ratio.append(ratio)
         return action_prob_ratio
 
-def get_log_pi_gradient(policy, action, state):
+def get_log_pi_gradient(policy, action, state, mode = "param"):
     """
     caluculate the gradient of log probability of running a certain action
     on specified state under a specific policy
@@ -70,12 +70,16 @@ def get_log_pi_gradient(policy, action, state):
     # forward pass
     probs = policy(state)
 
-    # get the distribution
-    m = Bernoulli(probs)
+    if mode == "param":
+        # by the probablity obtained, create a categorical distribution
+        action_prob = torch.clamp(probs, min = 0.0, max = 1.0)
+        c = Bernoulli(action_prob)
+    else:
+        # by the probablity obtained, create a categorical distribution
+        c = Categorical(probs)
 
-    # get the log prob of a specific action
-    loss = m.log_prob(action)
-
+    loss = c.log_prob(action)
+    
     # calculate the gradient
     loss.backward()
 

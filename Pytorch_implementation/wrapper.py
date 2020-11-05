@@ -2,20 +2,23 @@ import copy
 import gc
 import numpy as np
 import matplotlib.pyplot as plt
-from optimization_grad import gradient_estimate_benchmark, gradient_estimate_causality, gradient_estimate_baseline, gradient_estimate_ihp1
-from variance_grad import variance_estimate_aggregate
-from environment import riverswim
-from policies import Policy_NN, Policy_Param
-from analysis import analysis
-from true_value import get_theoretical_gradient
-from rollout import roll_out_evaluate_average
+from .optimization_grad import gradient_estimate_benchmark, gradient_estimate_causality, gradient_estimate_baseline, gradient_estimate_ihp1
+from .variance_grad import variance_estimate_aggregate
+from .environment import riverswim
+from .policies import Policy_NN, Policy_Param
+from .analysis import analysis
+from .true_value import get_theoretical_gradient
+from .rollout import roll_out_evaluate_average
+from .utils import update_parameter, get_optimization_result
+from torch.utils.tensorboard import SummaryWriter
+from tqdm.notebook import tqdm 
 
 def in_policy_optimization(rolling_out_start_recording: int = 1000,
                            rolling_out_step: int = 15000,
                            n_rolling_out: int = 5,
                            optimization_step: int = 50,
                            lr: float = 0.05,
-                           normalized_grad: bool = True,
+                           normalized_grad_ascent: bool = True,
                            discount_constant: float = 1.0,
                            model: str = "param",
                            tensorboard: bool = True):
@@ -104,7 +107,7 @@ def in_policy_optimization(rolling_out_start_recording: int = 1000,
                                 learning_rate= lr_ihp1,
                                 normalize = normalized_grad_ascent)
 
-        tensorboard.add_scalars(main_tag=f"Average Reward Per Step, In-Policy, lr = {lr}",
+        tb.add_scalars(main_tag=f"Average Reward Per Step, In-Policy, lr = {lr}",
                         tag_scalar_dict={"Benchmark": reward_benchmark,
                                         "Causality": reward_causality,
                                         "Baseline": reward_baseline,
@@ -181,7 +184,7 @@ def off_policy_optimization(rolling_out_start_recording: int = 1000,
                                                 discount_constant = discount_constant,
                                                 mode = mode)
 
-        tensorboard.add_scalars(main_tag=f"Average reward per step: off policy, lr = {lr}",
+        tb.add_scalars(main_tag=f"Average reward per step: off policy, lr = {lr}",
                                 tag_scalar_dict={"Benchmark": reward_benchmark,
                                                  "Causality": reward_causality,
                                                  "Baseline": reward_baseline,
@@ -232,7 +235,6 @@ def variance_illustration(rolling_out_start_recording: int = 1000,
                           n_rolling_out: int = 5,
                           optimization_step: int = 50,
                           lr: float = 0.05,
-                          normalized_grad: bool = True,
                           discount_constant: float = 1.0,
                           model: str = "param",
                           tensorboard: bool = True):
