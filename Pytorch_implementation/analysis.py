@@ -77,7 +77,12 @@ def cosine_similarity(a,b):
     """
     return np.dot(a, b)/(np.linalg.norm(a)*np.linalg.norm(b))
 
-def direction_analysis(benchmark_record, baseline_record, causality_record, ihp1_record):
+def direction_analysis(benchmark_record,
+                       baseline_record,
+                       causality_record,
+                       ihp1_record,
+                       mode = "param",
+                       true_value = None):
     """
     wrapper of the direction analysis, compute the cosine similarity to average of each method.
     input:
@@ -89,18 +94,31 @@ def direction_analysis(benchmark_record, baseline_record, causality_record, ihp1
     print("ihp1 vs benchmark: ", cosine_similarity(np.mean(benchmark_record, axis = 0), np.mean(ihp1_record, axis = 0)))
     print("ihp1 vs baseline: ", cosine_similarity(np.mean(baseline_record, axis = 0), np.mean(ihp1_record, axis = 0)))
     print("ihp1 vs causality: ", cosine_similarity(np.mean(causality_record, axis = 0), np.mean(ihp1_record, axis = 0)))
+    if mode == "param" and true_value != None:
+        print("benchmark vs true value: ", cosine_similarity(np.mean(benchmark_record, axis = 0), true_value))
+        print("causality vs true value: ", cosine_similarity(np.mean(causality_record, axis = 0), true_value))
+        print("baseline vs true value: ", cosine_similarity(np.mean(baseline_record, axis = 0), true_value))
+        print("ihp1 vs true value: ", cosine_similarity(np.mean(ihp1_record, axis = 0), true_value))
 
-def analysis(benchmark_record, causality_record, baseline_record, ihp1_record):
+def analysis(benchmark_record, causality_record, baseline_record, ihp1_record, true_value = None, mode = "param"):
     """
     wrapper of the variance and direction analysis
     input:
       benchmark_record, baseline_record, causality_record, ihp1_record: list of np.array, a list of all the ndarray form of gradient in n_grad * num_param shape
     """
-    direction_analysis(benchmark_record, causality_record, baseline_record, ihp1_record)
+    direction_analysis(benchmark_record, causality_record, baseline_record, ihp1_record, true_value, mode = "param")
+    for i in range(6):
+        boxplot_analysis(benchmark_record,causality_record,baseline_record,ihp1_record, true_value, dim = i, mode = mode)
     return variance_analysis(records = [benchmark_record, causality_record, baseline_record, ihp1_record],
                              names = ["benchmark",  "causality", "baseline", "ihp1"])
 
-def boxplot_analysis(benchmark_record,causality_record,baseline_record,ihp1_record, dim):
+def boxplot_analysis(benchmark_record,
+                     causality_record,
+                     baseline_record,
+                     ihp1_record,
+                     dim = 5,
+                     mode = "param",
+                     true_value = None):
     """
     comparing distribution of different gradient estimating methods' result in one dimention
     input:
@@ -110,3 +128,7 @@ def boxplot_analysis(benchmark_record,causality_record,baseline_record,ihp1_reco
     df['method'] = ["benchmark", "causality", "baseline", "ihp1"]
     df = pd.melt(df, id_vars = 'method')
     sns.boxplot(data = df, x = "method", y = "value")
+    if mode == "param" and true_value != None:
+        plt.axhline(true_value[dim], c = "r")
+    plt.title(f"entry wise distribution in boxplot, dim = {dim}")
+    plt.show()
